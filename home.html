@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>[ NEXUS CONTROL ] - System Access Granted</title>
+
+<!-- PWA Meta Tags -->
+<meta name="theme-color" content="#00ff41">
+<meta name="background-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Eclipse Hub Control">
+<meta name="msapplication-TileColor" content="#0a0a0a">
+
+<!-- Manifest Link -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMGEwYTBhIi8+CjxwYXRoIGQ9Ik05NiAxNDRDNzMuOTA4NiAxNDQgNTYgMTI2LjA5MSA1NiA5NkM1NiA2NS45MDg2IDczLjkwODYgNDggOTYgNDhDMTE4LjA5MSA0OCAxMzYgNjUuOTA4NiAxMzYgOTZDMTM2IDEyNi4wOTEgMTE4LjA5MSAxNDQgOTYgMTQ0WiIgZmlsbD0iIzAwZmY0MSIvPjwvc3ZnPgo=">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiBmaWxsPSIjMGEwYTBhIi8+CjxwYXRoIGQ9Ik0zNiA1NEMyNy43MTU3IDU0IDIxIDQ3LjI4NDMgMjEgMzlDMjEgMzAuNzE1NyAyNy43MTU3IDI0IDM2IDI0QzQ0LjI4NDMgMjQgNTEgMzAuNzE1NyA1MSAzOUM1MSA0Ny4yODQzIDQ0LjI4NDMgNTQgMzYgNTRaIiBmaWxsPSIjMDBmZjQxIi8+PC9zdmc+">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: #0a0a0a;
+    color: #00ff41;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* PWA Install Button */
+  .install-prompt {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 255, 65, 0.1);
+    border: 2px solid #00ff41;
+    color: #00ff41;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+  }
+  
+  .install-prompt:hover {
+    background: rgba(0, 255, 65, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  /* Offline Indicator */
+  .offline-indicator {
+    position: fixed;
+    bottom: 60px;
+    left: 20px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 2px solid #ff6b6b;
+    color: #ff6b6b;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 11px;
+    display: none;
+    z-index: 1001;
+  }
+
+  /* Matrix Rain Background */
+  .matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.08;
+  }
+
+  /* Scanlines Effect */
+  .scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      transparent 50%,
+      rgba(0, 255, 65, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    animation: scanline 0.1s linear infinite;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  @keyframes scanline {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 4px; }
+  }
+
+  /* Main Content */
+  .content-wrapper {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.02) 0%, transparent 70%);
+  }
+
+  /* Terminal Header */
+  .terminal-header {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00ff41;
+    border-bottom: none;
+    padding: 20px 30px;
+    margin-top: 50px;
+    box-shadow: 
+      0 0 30px rgba(0, 255, 65, 0.3),
+      inset 0 0 30px rgba(0, 255, 65, 0.1);
+  }
+
+  .system-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  .status-indicator {
+    color: #4ecdc4;
+  }
+
+  .terminal-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 0 15px #00ff41;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    animation: glitch 4s infinite;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    text-align: center;
+    opacity: 0.7;
+    color: #ff6b6b;
+  }
+
+  /* Welcome Container */
+  .welcome-container {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #00ff41;
+    border-top: none;
+    padding: 50px;
+    box-shadow: 
+      0 0 40px rgba(0, 255, 65, 0.4),
+      inset 0 0 40px rgba(0, 255, 65, 0.1);
+  }
+
+  /* Command Line */
+  .command-line {
+    margin-bottom: 30px;
+    font-size: 14px;
+    opacity: 0.8;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  }
+
+  .prompt {
+    color: #ff6b6b;
+  }
+
+  /* Main Title */
+  h1 {
+    color: #00ff41;
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+    text-shadow: 0 0 20px #00ff41;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Welcome Message */
+  .welcome-message {
+    background: rgba(0, 255, 65, 0.05);
+    border-left: 4px solid #00ff41;
+    padding: 20px;
+    margin: 30px 0;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .welcome-message::before {
+    content: '> ';
+    color: #ff6b6b;
+    font-weight: bold;
+  }
+
+  /* Button Container */
+  .button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+  }
+
+  /* Hack Buttons */
+  .hack-button {
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(0, 255, 65, 0.1));
+    border: 2px solid #00ff41;
+    color: #00ff41;
+    padding: 20px 25px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    overflow: hidden;
+    box-shadow: 
+      0 0 20px rgba(0, 255, 65, 0.3),
+      inset 0 0 20px rgba(0, 255, 65, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .hack-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.3), transparent);
+    transition: left 0.6s;
+  }
+
+  .hack-button:hover::before {
+    left: 100%;
+  }
+
+  .hack-button:hover {
+    background: linear-gradient(45deg, rgba(0, 255, 65, 0.1), rgba(0, 0, 0, 0.8));
+    box-shadow: 
+      0 0 30px rgba(0, 255, 65, 0.6),
+      inset 0 0 30px rgba(0, 255, 65, 0.2);
+    transform: translateY(-3px);
+    text-shadow: 0 0 10px #00ff41;
+  }
+
+  .hack-button:active {
+    transform: translateY(0);
+  }
+
+  /* Button Specific Colors */
+  .cheats-btn { 
+    border-color: #ff6b6b; 
+    color: #ff6b6b; 
+  }
+  .cheats-btn:hover { 
+    border-color: #ff6b6b; 
+    color: #ff6b6b;
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.6), inset 0 0 30px rgba(255, 107, 107, 0.2);
+    text-shadow: 0 0 10px #ff6b6b;
+  }
+
+  .unblockers-btn { 
+    border-color: #4ecdc4; 
+    color: #4ecdc4; 
+  }
+  .unblockers-btn:hover { 
+    border-color: #4ecdc4; 
+    color: #4ecdc4;
+    box-shadow: 0 0 30px rgba(78, 205, 196, 0.6), inset 0 0 30px rgba(78, 205, 196, 0.2);
+    text-shadow: 0 0 10px #4ecdc4;
+  }
+
+  .soundboard-btn { 
+    border-color: #ffd93d; 
+    color: #ffd93d; 
+  }
+  .soundboard-btn:hover { 
+    border-color: #ffd93d; 
+    color: #ffd93d;
+    box-shadow: 0 0 30px rgba(255, 217, 61, 0.6), inset 0 0 30px rgba(255, 217, 61, 0.2);
+    text-shadow: 0 0 10px #ffd93d;
+  }
+
+  .chatgpt-btn { 
+    border-color: #a8e6cf; 
+    color: #a8e6cf; 
+  }
+  .chatgpt-btn:hover { 
+    border-color: #a8e6cf; 
+    color: #a8e6cf;
+    box-shadow: 0 0 30px rgba(168, 230, 207, 0.6), inset 0 0 30px rgba(168, 230, 207, 0.2);
+    text-shadow: 0 0 10px #a8e6cf;
+  }
+
+  /* Button Icons */
+  .btn-icon {
+    font-size: 18px;
+    margin-right: 8px;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid #00ff41;
+    padding: 12px 25px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Secret Access Indicator */
+  .secret-hint {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+    padding: 8px 15px;
+    font-size: 11px;
+    opacity: 0.6;
+    z-index: 6;
+    animation: pulseSecret 2s infinite;
+  }
+
+  @keyframes pulseSecret {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Glitch Animation */
+  @keyframes glitch {
+    0%, 100% { 
+      transform: translate(0);
+      text-shadow: 0 0 15px #00ff41;
+    }
+    20% { 
+      transform: translate(-1px, 1px);
+      text-shadow: 2px 0 #ff6b6b, -2px 0 #4ecdc4, 0 0 20px #00ff41;
+    }
+    40% { 
+      transform: translate(-1px, -1px);
+      text-shadow: 0 0 15px #00ff41;
+    }
+    60% { 
+      transform: translate(1px, 1px);
+      text-shadow: 2px 0 #4ecdc4, -2px 0 #ff6b6b, 0 0 20px #00ff41;
+    }
+    80% { 
+      transform: translate(1px, -1px);
+      text-shadow: 0 0 15px #00ff41;
+    }
+  }
+
+  /* Typing Animation */
+  .typing {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #00ff41;
+    animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+  }
+
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #00ff41 }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .welcome-container {
+      padding: 30px 20px;
+      margin: 0 10px;
+    }
+    
+    .terminal-header {
+      padding: 15px 20px;
+      margin: 0 10px;
+      margin-top: 30px;
+    }
+    
+    .button-container {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    h1 {
+      font-size: 22px;
+    }
+    
+    .install-prompt {
+      top: 10px;
+      left: 10px;
+      padding: 8px 12px;
+      font-size: 11px;
+    }
+    
+    .secret-hint {
+      top: 10px;
+      right: 10px;
+      padding: 6px 10px;
+      font-size: 10px;
+    }
+  }
+</style>
+</head>
+<body>
+  <!-- PWA Install Button -->
+  <button class="install-prompt" id="installBtn" style="display: none;">
+    <i class="fas fa-download"></i> Install Control Panel
+  </button>
+  
+  <!-- Offline Indicator -->
+  <div class="offline-indicator" id="offlineIndicator">
+    <i class="fas fa-wifi-slash"></i> Offline Mode Active
+  </div>
+
+  <!-- Matrix Rain Background -->
+  <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+  
+  <!-- Scanlines Effect -->
+  <div class="scanlines"></div>
+
+  <!-- Secret Access Hint -->
+  <div class="secret-hint">
+    [ CTRL + \ ] SECRET ACCESS
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Terminal Header -->
+    <div class="terminal-header">
+      <div class="system-status">
+        <span><i class="fas fa-circle" style="color: #4ecdc4;"></i> SYSTEM ONLINE</span>
+        <span class="status-indicator">CONNECTION: SECURE</span>
+        <span><i class="fas fa-shield-alt"></i> FIREWALL: ACTIVE</span>
+      </div>
+      <div class="terminal-title">
+        [ Eclipse🌒 CONTROL PANEL ]
+      </div>
+      <div class="subtitle">
+        ◄ ACCESS GRANTED - SELECT MODULE ►
+      </div>
+    </div>
+
+    <!-- Welcome Container -->
+    <div class="welcome-container">
+      <div class="command-line">
+        <span class="prompt">root@nexus-control:~$</span> <span class="typing">ls -la /modules/available/</span>
+      </div>
+
+      <h1>◄ System Access Granted ►</h1>
+      
+      <div class="welcome-message">
+        Welcome to the Eclipse Hub Control Panel. All systems are operational and ready for deployment. Select your desired module from the available options below. Each module has been verified and is ready for execution.
+      </div>
+
+      <div class="button-container">
+        <button class="hack-button cheats-btn" onclick="initiateModule('Cheats.html')">
+          <i class="fas fa-terminal btn-icon"></i>
+          [ CHEATS.EXE ]
+        </button>
+        <button class="hack-button unblockers-btn" onclick="initiateModule('unblockers.html')">
+          <i class="fas fa-unlock-alt btn-icon"></i>
+          [ UNBLOCKERS.SYS ]
+        </button>
+        <button class="hack-button soundboard-btn" onclick="initiateModule('sound board.html')">
+          <i class="fas fa-volume-up btn-icon"></i>
+          [ SOUNDBOARD.APP ]
+        </button>
+        <button class="hack-button chatgpt-btn" onclick="initiateModule('chatgpt.html')">
+          <i class="fas fa-robot btn-icon"></i>
+          [ CHATGPT.BIN ]
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item">
+      <i class="fas fa-microchip"></i>
+      <span>CPU: 47%</span>
+    </div>
+    <div class="status-item">
+      <i class="fas fa-memory"></i>
+      <span>RAM: 2.1GB</span>
+    </div>
+    <div class="status-item">
+      <i class="fas fa-clock"></i>
+      <span id="currentTime"></span>
+    </div>
+    <div class="status-item">
+      <i class="fas fa-user-shield"></i>
+      <span>USER: ROOT</span>
+    </div>
+    <div class="status-item" id="connectionStatus">
+      <i class="fas fa-wifi"></i>
+      <span>ONLINE</span>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+  <script>
+    // PWA Installation Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    // Check if app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      console.log('App is running in standalone mode');
+    } else {
+      // Show install button when PWA can be installed
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+      });
+    }
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        
+        if (outcome === 'accepted') {
+          installBtn.innerHTML = '<i class="fas fa-check"></i> Installing...';
+          setTimeout(() => {
+            installBtn.style.display = 'none';
+          }, 2000);
+        }
+        
+        deferredPrompt = null;
+      }
+    });
+
+    // Hide install button after successful installation
+    window.addEventListener('appinstalled', () => {
+      installBtn.style.display = 'none';
+      console.log('Eclipse Hub Control Panel installed successfully');
+      
+      // Show success notification
+      const notification = document.createElement('div');
+      notification.innerHTML = '<i class="fas fa-check-circle"></i> App Installed Successfully!';
+      notification.style.cssText = `
+        position: fixed; top: 80px; left: 20px; background: rgba(0, 255, 65, 0.2);
+        border: 2px solid #00ff41; color: #00ff41; padding: 10px 15px;
+        border-radius: 5px; font-family: inherit; font-size: 12px;
+        z-index: 1002; animation: slideIn 0.5s ease;
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    });
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((registration) => {
+            console.log('Service Worker registered successfully:', registration);
+          })
+          .catch((error) => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+
+    // Online/Offline Detection
+    const offlineIndicator = document.getElementById('offlineIndicator');
+    const connectionStatus = document.getElementById('connectionStatus');
+    
+    function updateOnlineStatus() {
+      if (navigator.onLine) {
+        offlineIndicator.style.display = 'none';
+        connectionStatus.innerHTML = '<i class="fas fa-wifi"></i><span>ONLINE</span>';
+      } else {
+        offlineIndicator.style.display = 'block';
+        connectionStatus.innerHTML = '<i class="fas fa-wifi-slash"></i><span>OFFLINE</span>';
+        connectionStatus.style.color = '#ff6b6b';
+      }
+    }
+
+    window.addEventListener('online', () => {
+      updateOnlineStatus();
+      console.log('Connection restored');
+    });
+    
+    window.addEventListener('offline', () => {
+      updateOnlineStatus();
+      console.log('Connection lost - running in offline mode');
+    });
+    
+    updateOnlineStatus();
+
+    // Matrix Rain Effect
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+    const matrixArray = matrix.split("");
+
+    const fontSize = 12;
+    const columns = canvas.width / fontSize;
+
+    const drops = [];
+    for (let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px JetBrains Mono';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 40);
+
+    // Resize canvas on window resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Module initialization with enhanced animations
+    function initiateModule(target) {
+      const button = event.target;
+      const originalHTML = button.innerHTML;
+      
+      // Show loading state
+      button.innerHTML = '<i class="fas fa-spinner fa-spin btn-icon"></i>[ INITIALIZING... ]';
+      button.style.pointerEvents = 'none';
+      
+      // Add loading visual effects
+      button.style.animation = 'pulse 0.5s infinite alternate';
+      
+      setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check btn-icon"></i>[ MODULE LOADED ]';
+        button.style.animation = '';
+        setTimeout(() => {
+          button.innerHTML = '<i class="fas fa-rocket btn-icon"></i>[ LAUNCHING... ]';
+          setTimeout(() => {
+            // Check if running offline and target file exists
+            if (!navigator.onLine) {
+              // Try to load from cache
+              caches.match(target).then(response => {
+                if (response) {
+                  window.location.href = target;
+                } else {
+                  button.innerHTML = '<i class="fas fa-exclamation-triangle btn-icon"></i>[ OFFLINE - MODULE UNAVAILABLE ]';
+                  button.style.color = '#ff6b6b';
+                  setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.pointerEvents = 'auto';
+                    button.style.color = '';
+                  }, 2000);
+                }
+              });
+            } else {
+              window.location.href = target;
+            }
+          }, 800);
+        }, 1000);
+      }, 1200);
+    }
+
+    // Update time in status bar
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', { 
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      document.getElementById('currentTime').textContent = timeString;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Secret access keyboard shortcut
+    document.addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.key === '\\') {
+        event.preventDefault();
+        
+        // Add visual feedback for secret access
+        const hint = document.querySelector('.secret-hint');
+        hint.style.background = 'rgba(255, 107, 107, 0.3)';
+        hint.innerHTML = '[ SECRET ACCESS ACTIVATED ]';
+        hint.style.animation = 'pulse 0.3s infinite';
+        
+        setTimeout(() => {
+          window.location.href = 'secrect.html';
+        }, 500);
+      }
+    });
+
+    // Add random glitch effects
+    setInterval(() => {
+      const title = document.querySelector('.terminal-title');
+      if (Math.random() > 0.95) {
+        title.style.textShadow = '2px 0 #ff6b6b, -2px 0 #4ecdc4, 0 0 25px #00ff41';
+        setTimeout(() => {
+          title.style.textShadow = '0 0 15px #00ff41';
+        }, 150);
+      }
+    }, 2500);
+
+    // System startup sequence
+    window.addEventListener('load', () => {
+      const statusItems = document.querySelectorAll('.status-item');
+      statusItems.forEach((item, index) => {
+        setTimeout(() => {
+          item.style.opacity = '0.6';
+          setTimeout(() => {
+            item.style.opacity = '1';
+          }, 200);
+        }, index * 300);
+      });
+    });
+
+    // Add slide-in animation for notifications
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(-100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

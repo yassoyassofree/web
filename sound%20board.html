@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Player</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 50px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    #status {
+      margin-top: 20px;
+      color: white;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <button id="playButton">▶ Play Sound</button>
+    <div id="status">Click the button to play</div>
+  </div>
+
+  <audio id="player_1" preload="auto">
+    <source src="yamete kudasai ahh - sound effect anime.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const playButton = document.getElementById('playButton');
+    const audio = document.getElementById('player_1');
+    const statusDiv = document.getElementById('status');
+    let isPlaying = false;
+
+    // Handle user interaction for audio context
+    function initAudio() {
+      // This is needed for mobile browsers
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          if (error.name === 'NotAllowedError') {
+            statusDiv.textContent = 'Please click the button to allow audio';
+          } else {
+            statusDiv.textContent = 'Error: ' + error.message;
+          }
+        }).then(() => {
+          // Pause immediately after starting to reset the state
+          audio.pause();
+          audio.currentTime = 0;
+        });
+      }
+    }
+
+    // Initial setup
+    initAudio();
+
+    // Play/Pause functionality
+    playButton.addEventListener('click', async () => {
+      try {
+        if (isPlaying) {
+          audio.pause();
+          audio.currentTime = 0;
+          playButton.textContent = '▶ Play Sound';
+          statusDiv.textContent = 'Sound stopped';
+        } else {
+          await audio.play();
+          playButton.textContent = '⏹ Stop';
+          statusDiv.textContent = 'Playing...';
+        }
+        isPlaying = !isPlaying;
+      } catch (error) {
+        statusDiv.textContent = 'Error playing sound: ' + error.message;
+        console.error('Audio error:', error);
+      }
+    });
+
+    // Handle when audio ends
+    audio.addEventListener('ended', () => {
+      playButton.textContent = '▶ Play Sound';
+      statusDiv.textContent = 'Sound finished playing';
+      isPlaying = false;
+    });
+
+    // Handle errors
+    audio.addEventListener('error', () => {
+      statusDiv.textContent = 'Error: Could not load the audio file';
+      console.error('Audio load error:', audio.error);
+    });
+  </script>
+</body>
+</html>

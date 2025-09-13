@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link and Console Code Runner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            width: 300px;
+            padding: 10px;
+            margin: 5px;
+        }
+        button {
+            padding: 10px 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Open a Link and Run Console Code</h1>
+    <input type="text" id="linkInput" placeholder="Enter your link here">
+    <input type="text" id="consoleCodeInput" placeholder="Enter console code to run">
+    <button id="runButton">Run</button>
+
+    <script>
+        document.getElementById('runButton').addEventListener('click', function() {
+            const link = document.getElementById('linkInput').value;
+            const consoleCode = document.getElementById('consoleCodeInput').value;
+
+            if (link) {
+                // Store the console code in local storage to access it in the new tab
+                localStorage.setItem('consoleCode', consoleCode);
+
+                // Open the link in a new tab
+                window.open(link, '_blank');
+
+                // Inform the user to open the console in the new tab
+                alert("The link has been opened. Please press F12 or right-click and select 'Inspect' to open the console on that page.");
+            } else {
+                console.log("Please enter a valid link.");
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+<!-- New Page Code (link.html) -->
+<script>
+    // Get the console code from local storage
+    const consoleCode = localStorage.getItem('consoleCode');
+
+    if (consoleCode) {
+        try {
+            // Run the console code
+            eval(consoleCode);
+        } catch (error) {
+            console.error("Error executing code:", error);
+        }
+    } else {
+        console.log("No console code provided.");
+    }
+</script>

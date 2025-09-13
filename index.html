@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hackers Only</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <!-- PWA Meta Tags -->
+        <meta name="theme-color" content="#00ff41">
+        <meta name="background-color" content="#181818">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Eclipse Hub">
+        <meta name="msapplication-TileColor" content="#181818">
+        <meta name="msapplication-TileImage" content="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNDQiIGhlaWdodD0iMTQ0IiBmaWxsPSIjMTgxODE4Ii8+CjxwYXRoIGQ9Ik03MiAxMDhDNTUuNDMxNCAxMDggNDIgOTQuNTY4NiA0MiA3OEM0MiA2MS40MzE0IDU1LjQzMTQgNDggNzIgNDhDODguNTY4NiA0OCAxMDIgNjEuNDMxNCAxMDIgNzhDMTAyIDk0LjU2ODYgODguNTY4NiAxMDggNzIgMTA4WiIgZmlsbD0iIzAwRkY0MSIvPjwvc3ZnPgo=">
+        
+        <!-- Manifest Link -->
+        <link rel="manifest" href="manifest.json">
+        
+        <!-- Apple Touch Icons -->
+        <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMTgxODE4Ii8+CjxwYXRoIGQ9Ik05NiAxNDRDNzMuOTA4NiAxNDQgNTYgMTI2LjA5MSA1NiA5NkM1NiA2NS45MDg2IDczLjkwODYgNDggOTYgNDhDMTE4LjA5MSA0OCAxMzYgNjUuOTA4NiAxMzYgOTZDMTM2IDEyNi4wOTEgMTE4LjA5MSAxNDQgOTYgMTQ0WiIgZmlsbD0iIzAwRkY0MSIvPjwvc3ZnPgo=">
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiBmaWxsPSIjMTgxODE4Ii8+CjxwYXRoIGQ9Ik0zNiA1NEMyNy43MTU3IDU0IDIxIDQ3LjI4NDMgMjEgMzlDMjEgMzAuNzE1NyAyNy43MTU3IDI0IDM2IDI0QzQ0LjI4NDMgMjQgNTEgMzAuNzE1NyA1MSAzOUM1MSA0Ny4yODQzIDQ0LjI4NDMgNTQgMzYgNTRaIiBmaWxsPSIjMDBGRjQxIi8+PC9zdmc+">
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        
+    <style>
+        body {
+            background: #181818;
+            color: #00ff41;
+            font-family: 'Fira Mono', 'Consolas', 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .hacker-text {
+            font-size: 2.5em;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #00ff41;
+            white-space: pre;
+            cursor: pointer;
+        }
+        .cursor {
+            display: inline-block;
+            width: 1ch;
+            background: #00ff41;
+            animation: blink 1s steps(1) infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .button-container {
+            display: none; /* Initially hidden */
+            gap: 20px;
+        }
+        .redirect-button {
+            background-color: #00ff41;
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+            color: #181818;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            box-shadow: 0 0 8px #00ff41;
+        }
+        .redirect-button:hover {
+            background-color: #181818;
+            color: #00ff41;
+        }
+    </style>
+</head>
+<body>
+    <div class="hacker-text" id="hackerText"></div>
+
+    <div id="passwordContainer" style="display:none; flex-direction:column; align-items:center; justify-content:center;">
+        <label for="passwordInput" style="color:#00ff41; font-size:1.5em; margin-bottom:16px;">Enter password:</label>
+        <div style="position:relative; width:fit-content;">
+            <input type="password" id="passwordInput" style="background:#181818; color:#00ff41; border:2px solid #00ff41; border-radius:4px; padding:10px 40px 10px 10px; font-size:1.2em; margin-bottom:16px; font-family:inherit;">
+            <button id="togglePassword" type="button" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:#00ff41; font-size:1.3em; cursor:pointer;">
+                <i class="fa-regular fa-eye"></i>
+            </button>
+        </div>
+        <button id="submitPassword" style="background:#181818; color:#00ff41; border:2px solid #00ff41; border-radius:4px; padding:8px 18px; font-size:1em; cursor:pointer; font-family:inherit;">Submit</button>
+        <button id="crackCodeBtn" style="background:none; color:#00ff41; border:none; font-size:1em; margin-top:8px; text-decoration:underline; cursor:pointer;">Crack Code</button>
+        <div id="passwordError" style="color:#ff4141; margin-top:10px; font-size:1em; display:none;">Wrong password!</div>
+    </div>
+
+    <div class="button-container" id="buttonContainer">
+        <button class="redirect-button" onclick="window.location.href='unavalable.html'">Blooket</button>
+        <button class="redirect-button" onclick="window.location.href='unavalable.html'">Kahoot</button>
+        <button class="redirect-button" onclick="window.location.href='unavalable.html'">Quizizz</button>
+        <button class="redirect-button" onclick="window.location.href='unavalable.html'">IXL</button>
+    </div>
+    
+    <script>
+        const hackerText = document.getElementById('hackerText');
+        const passwordContainer = document.getElementById('passwordContainer');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitPassword = document.getElementById('submitPassword');
+        const passwordError = document.getElementById('passwordError');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = togglePassword.querySelector('i');
+
+        // Hacker text typing effect
+        const lines = ["welcome", "to Eclipse🌑Hub only website"];
+        let line = 0, char = 0;
+        function typeLine() {
+            if (line < lines.length) {
+                if (char <= lines[line].length) {
+                    hackerText.innerHTML = lines.slice(0, line).join('\n') + (line > 0 ? '\n' : '') + lines[line].slice(0, char) + '<span class="cursor"></span>';
+                    char++;
+                    setTimeout(typeLine, 80);
+                } else {
+                    char = 0; line++;
+                    setTimeout(typeLine, 600);
+                }
+            } else {
+                hackerText.innerHTML = lines.join('\n');
+            }
+        }
+        typeLine();
+
+        // Show password prompt on click
+        hackerText.addEventListener('click', () => {
+            hackerText.style.display = 'none';
+            passwordContainer.style.display = 'flex';
+            passwordInput.focus();
+        });
+
+        // Handle password submission
+        submitPassword.addEventListener('click', () => {
+            if (passwordInput.value === 'grade7rizzlery') {
+                passwordError.style.display = 'none';
+                passwordContainer.style.display = 'none';
+                buttonContainer.style.display = 'flex';
+            } else {
+                passwordError.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        });
+
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitPassword.click();
+        });
+
+        // Crack Code button logic
+        document.getElementById('crackCodeBtn').addEventListener('click', () => {
+            window.location.href = 'crackcode.html';
+        });
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-regular', 'fa-eye');
+                eyeIcon.classList.add('fa-solid', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-solid', 'fa-eye-slash');
+                eyeIcon.classList.add('fa-regular', 'fa-eye');
+            }
+        });
+
+        // Redirect on Alt+I
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key.toLowerCase() === 'i') {
+                e.preventDefault();
+                window.location.href = 'home.html';
+            }
+        });
+    </script>
+</body>
+</html>
